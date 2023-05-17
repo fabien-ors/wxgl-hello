@@ -19,8 +19,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name : Create GUI standalone
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -yq libwxgtk3.0-gtk3-dev
+        sudo apt-get install -yq freeglut3-dev
+        
+    - name : Create GUI sample program
       run : |
         cmake -B${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} -DBUILD_PYTHON=OFF -DBUILD_R=OFF -DBUILD_GUI=ON
-        cmake --build ${{env.BUILD_DIR}} --target flumy
+        cmake --build ${{env.BUILD_DIR}} --target all
 
