@@ -38,3 +38,4 @@ jobs:
         password: ${{ secrets.CG_PWD }}
         source: ${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/hello
         target: /home/${{ secrets.CG_USR }}/wxgl/ubuntu/hello
+        strip_components: 2
