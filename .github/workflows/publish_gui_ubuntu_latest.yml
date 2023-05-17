@@ -1,0 +1,26 @@
+name: publish_gui_ubuntu-latest
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Manual'
+        required: false
+        default: ''
+
+env:
+  BUILD_TYPE: Release
+  BUILD_DIR : build
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name : Create GUI standalone
+      run : |
+        cmake -B${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} -DBUILD_PYTHON=OFF -DBUILD_R=OFF -DBUILD_GUI=ON
+        cmake --build ${{env.BUILD_DIR}} --target flumy
+
