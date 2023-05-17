@@ -37,5 +37,5 @@ jobs:
         username: ${{ secrets.CG_USR }}
         password: ${{ secrets.CG_PWD }}
         source: ${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/hello
-        target: /home/${{ secrets.CG_USR }}/wxgl/ubuntu/hello
+        target: /var/www/html/wxgl/ubuntu/
         strip_components: 2
