@@ -36,6 +36,7 @@ jobs:
         Start-Process -FilePath $installerPath -Args "/S" -Verb RunAs -Wait
         Remove-Item $installerPath
 
+    # DO NOT Download freeglut 3.0.0 MSVC Package and extract to C:/freeglut-3.0.0
     - name: Install Freeglut dependency
       run: |
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-2.8.1-1.mp.zip -OutFile freeglut.zip
@@ -45,6 +46,7 @@ jobs:
         ls ${{ env.GLUT_ROOT }}\freeglut
         ls ${{ env.GLUT_ROOT }}\freeglut\include
 
+    # Binaries are here: https://www.wxwidgets.org/downloads/
     - name: Install wxWidgets dependency
       run: |
         set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
