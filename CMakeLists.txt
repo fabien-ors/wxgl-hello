@@ -10,6 +10,8 @@ project(hello_world
 
 # Activate verbose mode
 #set(CMAKE_VERBOSE_MAKEFILE ON)
+# Debug find package instruction
+set(CMAKE_FIND_DEBUG_MODE TRUE)
 
 # Detect presence of multi configuration generators
 get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
