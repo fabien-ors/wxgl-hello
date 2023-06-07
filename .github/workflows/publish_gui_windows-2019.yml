@@ -38,7 +38,7 @@ jobs:
     - name: Install Freeglut dependency
       shell: pwsh
       run: |
-        wget https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-2.8.1-1.mp.zip -OutFile freeglut.zip
+        Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-2.8.1-1.mp.zip -OutFile freeglut.zip
         Expand-Archive .\freeglut.zip -DestinationPath .
 
     - name: Install wxWidgets dependency
