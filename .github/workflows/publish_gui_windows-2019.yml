@@ -17,7 +17,7 @@ env:
   COMPILE_VERSION : '"Visual Studio 16 2019"' #Because cmake -G needs " "
   WX_ROOT : ${{github.workspace}}/wx
   GLUT_ROOT : ${{github.workspace}}/freeglut #name of the first folder in freeglut archive
-  
+  WX_ROOT : ${{github.workspace}}/wx
 jobs:
   
   build:
@@ -38,22 +38,21 @@ jobs:
         Remove-Item $installerPath
 
     - name: Install Freeglut dependency
-      shell: pwsh
       run: |
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-2.8.1-1.mp.zip -OutFile freeglut.zip
         Expand-Archive .\freeglut.zip -DestinationPath .
-        ls freeglut
+        ls freeglut\include
 
     - name: Install wxWidgets dependency
       run: |
         set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1-headers.7z -OutFile wxHeaders.7z
-        sz x wxHeaders.7z -owxHeaders
+        sz x wxHeaders.7z -o${{ env.WX_ROOT }}
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxMSW-3.2.2_vc14x_x64_ReleaseDLL.7z -OutFile wxDLL.7z
-        sz x wxDLL.7z -owxDLL
+        sz x wxDLL.7z -o${{ env.WX_ROOT }}
         ls
-        ls wxHeaders
-        ls wxDLL
+        ls wx\include
+        ls wx\lib
 
     - name : Create GUI sample program
       run : |
