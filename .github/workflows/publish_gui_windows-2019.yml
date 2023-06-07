@@ -47,9 +47,9 @@ jobs:
       run: |
         set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1-headers.7z -OutFile wxHeaders.7z
-        sz x wxHeaders.7z -o$.
+        sz x wxHeaders.7z -o$wxHeaders
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxMSW-3.2.2_vc14x_x64_ReleaseDLL.7z -OutFile wxDLL.7z
-        sz x wxDLL.7z -o$.
+        sz x wxDLL.7z -o$wxDLL
         ls
 
     - name : Create GUI sample program
