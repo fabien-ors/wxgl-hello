@@ -53,7 +53,7 @@ jobs:
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxMSW-3.2.2_vc14x_x64_Dev.7z -OutFile wxDEV.7z
         sz x wxDEV.7z -o${{ env.WX_ROOT }} # create lib directory
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxMSW-3.2.2_vc14x_x64_ReleaseDLL.7z -OutFile wxDLL.7z
-        sz x wxDLL.7z -o${{ env.WX_ROOT }} # add some libraries in lib directory
+        sz x wxDLL.7z -y -o${{ env.WX_ROOT }} # add some libraries in lib directory
         
     - name : Create GUI sample program
       run : |
