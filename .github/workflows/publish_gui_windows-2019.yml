@@ -39,8 +39,11 @@ jobs:
     - name: Install Freeglut dependency
       run: |
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-2.8.1-1.mp.zip -OutFile freeglut.zip
-        Expand-Archive .\freeglut.zip -DestinationPath .
-        ls freeglut\include
+        Expand-Archive freeglut.zip -DestinationPath ${{ env.GLUT_ROOT }}
+        ls 
+        ls ${{ env.GLUT_ROOT }}
+        ls ${{ env.GLUT_ROOT }}\freeglut
+        ls ${{ env.GLUT_ROOT }}\freeglut\include
 
     - name: Install wxWidgets dependency
       run: |
@@ -50,8 +53,10 @@ jobs:
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxMSW-3.2.2_vc14x_x64_ReleaseDLL.7z -OutFile wxDLL.7z
         sz x wxDLL.7z -o${{ env.WX_ROOT }}
         ls
-        ls wx\include
-        ls wx\lib
+        ls ${{ env.WX_ROOT }}
+        ls ${{ env.WX_ROOT }}\include
+        ls ${{ env.WX_ROOT }}\lib
+        ls ${{ env.WX_ROOT }}\lib\*
 
     - name : Create GUI sample program
       run : |
