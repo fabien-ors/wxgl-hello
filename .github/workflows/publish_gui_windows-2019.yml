@@ -59,7 +59,7 @@ jobs:
       run : |
         cmake -B${{env.BUILD_DIR}} -DwxWidgets_ROOT=${{ env.WX_ROOT }} -DGLUT_ROOT=${{ env.GLUT_ROOT }}\freeglut
         cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}}
-        $EXE_PATH = Get-ChildItem -Path "${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/hello" -File
+        $EXE_PATH = Get-ChildItem -Path "${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/hello.exe" -File
         echo "MY_EXE=$EXE_PATH" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Result message
@@ -81,6 +81,6 @@ jobs:
         host: ${{ secrets.CG_HOST }}
         username: ${{ secrets.CG_USR }}
         password: ${{ secrets.CG_PWD }}
-        source: hello
+        source: hello.exe
         target: /var/www/html/wxgl/ubuntu/
 
