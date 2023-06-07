@@ -17,7 +17,6 @@ env:
   COMPILE_VERSION : '"Visual Studio 16 2019"' #Because cmake -G needs " "
   WX_ROOT : ${{github.workspace}}/wx
   GLUT_ROOT : ${{github.workspace}}/freeglut #name of the first folder in freeglut archive
-  WX_ROOT : ${{github.workspace}}/wx
 jobs:
   
   build:
