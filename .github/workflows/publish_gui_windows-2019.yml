@@ -41,18 +41,20 @@ jobs:
     - name: Install Freeglut dependency
       run: |
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-2.8.1-1.mp.zip -OutFile freeglut.zip
-        Expand-Archive freeglut.zip -DestinationPath ${{ env.GLUT_ROOT }}
+        Expand-Archive freeglut.zip -DestinationPath ${{ env.GLUT_ROOT }} # create freeglut directory
 
     # Use first version of wxWidgets supporting vc 14.3
     # Binaries are here: https://www.wxwidgets.org/downloads/
     - name: Install wxWidgets dependency
       run: |
         set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
-        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.6/wxWidgets-3.1.6-headers.7z -OutFile wxHeaders.7z
-        sz x wxHeaders.7z -o${{ env.WX_ROOT }}
-        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.6/wxMSW-3.1.6_vc14x_x64_Dev.7z -OutFile wxDEV.7z
-        sz x wxDEV.7z -o${{ env.WX_ROOT }}
-
+        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1-headers.7z -OutFile wxHeaders.7z
+        sz x wxHeaders.7z -o${{ env.WX_ROOT }} # create include directory
+        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxMSW-3.2.2_vc14x_x64_Dev.7z -OutFile wxDEV.7z
+        sz x wxDEV.7z -o${{ env.WX_ROOT }} # create lib directory
+        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxMSW-3.2.2_vc14x_x64_ReleaseDLL.7z -OutFile wxDLL.7z
+        sz x wxDLL.7z -o${{ env.WX_ROOT }} # add some libraries in lib directory
+        
     - name : Create GUI sample program
       run : |
         cmake -B${{env.BUILD_DIR}} -DwxWidgets_ROOT=${{ env.WX_ROOT }} -DGLUT_ROOT=${{ env.GLUT_ROOT }}\freeglut
