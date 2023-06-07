@@ -73,14 +73,20 @@ jobs:
   publish:
     needs: build
     # Only ubuntu can upload via SCP
-    runs-on: windows-executable
+    runs-on: ubuntu-latest
     
     steps:
+    - uses: actions/download-artifact@v3
+      # For downloading several artifacts: https://github.com/actions/download-artifact/issues/103#issuecomment-1290368250
+      with:
+        path: download_artifacts
+        
     - uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.CG_HOST }}
         username: ${{ secrets.CG_USR }}
         password: ${{ secrets.CG_PWD }}
-        source: hello.exe
-        target: /var/www/html/wxgl/ubuntu/
+        source: download_artifacts/hello.exe
+        target: /var/www/html/wxgl/windows/
+        strip_components: 1
 
