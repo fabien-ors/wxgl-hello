@@ -59,8 +59,8 @@ jobs:
 
     - name : Create GUI sample program
       run : |
-        cmake -B${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} -DwxWidgets_ROOT=${{ env.WX_ROOT }} -DGLUT_ROOT=${{ env.GLUT_ROOT }}\freeglut
-        cmake --build ${{env.BUILD_DIR}} --target all
+        cmake -B${{env.BUILD_DIR}} -DwxWidgets_ROOT=${{ env.WX_ROOT }} -DGLUT_ROOT=${{ env.GLUT_ROOT }}\freeglut
+        cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}}
 
     - name: Upload program to CG repo
       uses: appleboy/scp-action@master
