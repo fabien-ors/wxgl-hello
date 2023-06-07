@@ -15,21 +15,17 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: flumy/ubuntu-16-wx
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -yq libwxgtk3.0-gtk3-dev
-        sudo apt-get install -yq freeglut3-dev
         
     - name : Create GUI sample program
       run : |
         cmake -B${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE:STRING=${{env.BUILD_TYPE}}
         cmake --build ${{env.BUILD_DIR}} --target all
-
+        
     - name: Upload program to CG repo
       uses: appleboy/scp-action@master
       with:
