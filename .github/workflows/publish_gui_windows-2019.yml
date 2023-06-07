@@ -86,7 +86,7 @@ jobs:
         host: ${{ secrets.CG_HOST }}
         username: ${{ secrets.CG_USR }}
         password: ${{ secrets.CG_PWD }}
-        source: download_artifacts/hello.exe
+        source: download_artifacts/windows-executable/hello.exe
         target: /var/www/html/wxgl/windows/
-        strip_components: 1
+        strip_components: 2
 
