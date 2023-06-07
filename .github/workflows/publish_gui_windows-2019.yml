@@ -17,8 +17,8 @@ env:
   COMPILE_VERSION : '"Visual Studio 16 2019"' #Because cmake -G needs " "
   WX_ROOT : ${{github.workspace}}/wx
   GLUT_ROOT : ${{github.workspace}}/freeglut #name of the first folder in freeglut archive
-jobs:
   
+jobs:
   build:
     runs-on: windows-2019
 
@@ -42,10 +42,6 @@ jobs:
       run: |
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-2.8.1-1.mp.zip -OutFile freeglut.zip
         Expand-Archive freeglut.zip -DestinationPath ${{ env.GLUT_ROOT }}
-        ls 
-        ls ${{ env.GLUT_ROOT }}
-        ls ${{ env.GLUT_ROOT }}\freeglut
-        ls ${{ env.GLUT_ROOT }}\freeglut\include
 
     # Use same version of wxWidgets as Linux (3.0.5)
     # Binaries are here: https://www.wxwidgets.org/downloads/
@@ -56,21 +52,33 @@ jobs:
         sz x wxHeaders.7z -o${{ env.WX_ROOT }}
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.5/wxMSW-3.0.5_vc142_x64_Dev.7z -OutFile wxDEV.7z
         sz x wxDEV.7z -o${{ env.WX_ROOT }}
-        ls
-        ls ${{ env.WX_ROOT }}
 
     - name : Create GUI sample program
       run : |
         cmake -B${{env.BUILD_DIR}} -DwxWidgets_ROOT=${{ env.WX_ROOT }} -DGLUT_ROOT=${{ env.GLUT_ROOT }}\freeglut
         cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}}
+        $PKG_PATH = Get-ChildItem -Path "${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/hello -File
+        echo "MY_PKG=$PKG_PATH" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+        
+    - name: Result message
+      run: echo "Built ${{ env.MY_PKG }}"
 
-    - name: Upload program to CG repo
-      uses: appleboy/scp-action@master
+    - uses: actions/upload-artifact@v3
+      with:
+        name: windows-executable
+        path: ${{ env.MY_PKG }}
+        
+  publish:
+    needs: build
+    # Only ubuntu can upload via SCP
+    runs-on: windows-executable
+    
+    steps:
+    - uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.CG_HOST }}
         username: ${{ secrets.CG_USR }}
         password: ${{ secrets.CG_PWD }}
-        source: ${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/hello
+        source: hello
         target: /var/www/html/wxgl/ubuntu/
-        strip_components: 2
 
