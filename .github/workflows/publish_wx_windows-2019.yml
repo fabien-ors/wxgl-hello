@@ -1,0 +1,83 @@
+name: publish_wx_windows-2019
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Manual'
+        required: false
+        default: ''
+
+env:
+  WX_VERSION : 3.2.2.1
+  WX_ROOT : ${{github.workspace}}/wxWidgets-3.2.2.1 # Name of the folder in wx sources archive
+  
+jobs:
+  build:
+    runs-on: windows-2019
+
+    steps:
+    # wxWidgets sources are here: https://www.wxwidgets.org/downloads/
+    - name: Extract wxWidgets sources
+      run: |
+        set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
+        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v${{env.WX_VERSION}}/wxWidgets-${{env.WX_VERSION}}.tar.bz2 -OutFile wx.bz2
+        sz x -y wx.bz2 # Unzip
+        sz x -y wx -o${{github.workspace}} # Untar
+        ls ${{env.WX_ROOT}}
+
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    # TODO : Use different versions of Visual Studio (matrix)
+    - name: Compile wxWidgets sources (using Visual Studio shell)
+      run : |
+        cd ${{env.WX_ROOT}}\build\msw
+        set _CL_=/MT
+        msbuild -m:4 -t:build -p:"Configuration=Release;Platform=x64" wx_vc17.sln
+        
+    - name : Package the wxWidgets libraries
+      run : |
+        Compress-Archive -Path ${{env.WX_ROOT}} -DestinationPath wxWidgets-${{env.WX_VERSION}}_vc17_x64_release.zip
+        echo "MY_FILE=wxWidgets-${{env.WX_VERSION}}.zip" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+    - name: Result message
+      run: echo "Built ${{env.MY_FILE}}"
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: windows-archive
+        path: ${{env.MY_FILE}}
+
+  publish:
+    needs: build
+    # Only ubuntu can upload via SCP
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/download-artifact@v3
+      # For downloading several artifacts: https://github.com/actions/download-artifact/issues/103#issuecomment-1290368250
+      with:
+        path: download_artifacts
+        
+    - name: Retrieve the list of files (all artifacts)
+      # For join_by function: https://stackoverflow.com/a/17841619/3952924
+      run: |
+        ls -ls download_artifacts/*/*
+        flist=$(ls download_artifacts/*/*)
+        function join_by { local IFS="$1"; shift; echo "$*"; }
+        flist=$(join_by , $flist)
+        echo "Artifacts retrieved: $flist"
+        echo "FILE_LIST=$flist" >> "$GITHUB_ENV"
+      shell: bash
+      
+    - uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.CG_HOST }}
+        username: ${{ secrets.CG_USR }}
+        password: ${{ secrets.CG_PWD }}
+        source: ${{ env.FILE_LIST }}
+        target: /var/www/html/wxWidgets/
+        strip_components: 2
+
