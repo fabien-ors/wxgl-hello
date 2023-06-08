@@ -26,7 +26,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
+   
     # DO NOT Download freeglut 3.0.0 MSVC Package. It is buggy for glutWireCube, glutSolid* !!!
     # Keep freeglut 2.8.1
     - name: Install Freeglut dependency
@@ -53,11 +53,12 @@ jobs:
         sz x -y wx.bz2 # Unzip
         sz x -y wx -o${{github.workspace}} # Untar
         ls ${{ env.WX_ROOT }}
-        
-    - name: Compile wxWidgets sources (using Visual Studio shell)
-      uses: TheMrMilchmann/setup-msvc-dev@v2
+
+    - uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x64
+
+    - name: Compile wxWidgets sources (using Visual Studio shell)
       run : |
         cd ${{ env.WX_ROOT }}\build\msw
         nmake /a /t makefile.vc BUILD=release
