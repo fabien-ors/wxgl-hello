@@ -40,7 +40,7 @@ jobs:
     - name : Package the wxWidgets libraries
       run : |
         Compress-Archive -Path ${{env.WX_ROOT}} -DestinationPath wxWidgets-${{env.WX_VERSION}}_vc17_x64_release.zip
-        echo "MY_FILE=wxWidgets-${{env.WX_VERSION}}.zip" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+        echo "MY_FILE=wxWidgets-${{env.WX_VERSION}}_vc17_x64_release.zip" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Result message
       run: echo "Built ${{env.MY_FILE}}"
