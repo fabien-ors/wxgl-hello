@@ -17,8 +17,8 @@ env:
   COMPILE_VERSION : '"Visual Studio 16 2019"' #Because cmake -G needs " "
   WX_VERSION : 3.2.2.1
   GLUT_VERSION : 2.8.1-1
-  WX_ROOT : ${{github.workspace}}/wxWidgets-${{env.WX_VERSION}} # Name of the folder in wx sources archive
-  GLUT_ROOT : ${{github.workspace}}/freeglut                    # Name of the first folder in freeglut archive
+  WX_ROOT : ${{github.workspace}}/wxWidgets-3.2.2.1 # Name of the folder in wx sources archive
+  GLUT_ROOT : ${{github.workspace}}/freeglut        # Name of the first folder in freeglut archive
   
 jobs:
   build:
