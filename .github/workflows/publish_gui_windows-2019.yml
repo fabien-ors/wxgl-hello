@@ -1,8 +1,8 @@
 name: publish_gui_windows-2019
 
 on:
-  push:
-    branches: [ main ]
+  #push:
+  #  branches: [ main ]
   # Permit manual trigger
   workflow_dispatch:
     inputs:
@@ -15,8 +15,10 @@ env:
   BUILD_TYPE: Release
   BUILD_DIR : build
   COMPILE_VERSION : '"Visual Studio 16 2019"' #Because cmake -G needs " "
-  WX_ROOT : ${{github.workspace}}/wx
-  GLUT_ROOT : ${{github.workspace}}/freeglut #name of the first folder in freeglut archive
+  WX_VERSION : 3.2.2.1
+  GLUT_VERSION : 2.8.1-1
+  WX_ROOT : ${{github.workspace}}/wxWidgets-${{WX_VERSION}} # Name of the folder in wx sources archive
+  GLUT_ROOT : ${{github.workspace}}/freeglut                # Name of the first folder in freeglut archive
   
 jobs:
   build:
@@ -29,7 +31,7 @@ jobs:
     # Keep freeglut 2.8.1
     - name: Install Freeglut dependency
       run: |
-        Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-2.8.1-1.mp.zip -OutFile freeglut.zip
+        Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-${{GLUT_VERSION}}.mp.zip -OutFile freeglut.zip
         Expand-Archive freeglut.zip -DestinationPath ${{ env.GLUT_ROOT }} # create freeglut directory
 
     # Binaries are here: https://www.wxwidgets.org/downloads/
@@ -44,11 +46,12 @@ jobs:
 #        sz x wxDLL.7z -y -o${{ env.WX_ROOT }} # add some libraries in lib directory
 
     # Sources are here: https://www.wxwidgets.org/downloads/
-    - name: Compile and install wxWidgets dependency
+    - name: Compile wxWidgets dependency
       run: |
         set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
-        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1.tar.bz2 -OutFile wx.bz2
-        sz x wx.bz2 -o${{github.workspace}}
+        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v${{WX_VERSION}}/wxWidgets-${{WX_VERSION}}.tar.bz2 -OutFile wx.bz2
+        sz x -y wx.bz2 # Unzip
+        sz x -y wx -o${{github.workspace}} # Untar
         ls ${{ env.WX_ROOT }}
 
     - name : Create GUI sample program

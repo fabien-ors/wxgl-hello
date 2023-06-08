@@ -1,0 +1,22 @@
+name: test_win-docker
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Manual'
+        required: false
+        default: ''
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/windows/servercore:ltsc2019
+
+    steps:
+    - name : Echo a message using powershell
+      shell: pwsh
+      run : echo "That works fine!!!"
+
+
