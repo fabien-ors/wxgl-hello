@@ -17,8 +17,8 @@ env:
   COMPILE_VERSION : '"Visual Studio 16 2019"' #Because cmake -G needs " "
   WX_VERSION : 3.2.2.1
   GLUT_VERSION : 2.8.1-1
-  WX_ROOT : ${{github.workspace}}/wxWidgets-${{WX_VERSION}} # Name of the folder in wx sources archive
-  GLUT_ROOT : ${{github.workspace}}/freeglut                # Name of the first folder in freeglut archive
+  WX_ROOT : ${{github.workspace}}/wxWidgets-${{env.WX_VERSION}} # Name of the folder in wx sources archive
+  GLUT_ROOT : ${{github.workspace}}/freeglut                    # Name of the first folder in freeglut archive
   
 jobs:
   build:
@@ -49,7 +49,7 @@ jobs:
     - name: Extract wxWidgets sources
       run: |
         set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
-        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v${{WX_VERSION}}/wxWidgets-${{WX_VERSION}}.tar.bz2 -OutFile wx.bz2
+        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v${{env.WX_VERSION}}/wxWidgets-${{env.WX_VERSION}}.tar.bz2 -OutFile wx.bz2
         sz x -y wx.bz2 # Unzip
         sz x -y wx -o${{github.workspace}} # Untar
         ls ${{ env.WX_ROOT }}
