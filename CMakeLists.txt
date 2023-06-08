@@ -35,6 +35,9 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# FINDING DEPENDENCIES
+#############################################################
+
 # Find wxWidgets
 find_package(wxWidgets 3.0 REQUIRED gl core base adv)
 include(${wxWidgets_USE_FILE})
@@ -46,8 +49,11 @@ if (MSVC AND GLUT_FOUND)
   cmake_path(APPEND GLUT_ROOT "lib" "x64" "freeglut.lib" OUTPUT_VARIABLE GLUT_LIBRARIES)
 endif()
 
-# OpenGL
+# Find OpenGL
 find_package(OpenGL REQUIRED)
+
+# BUILDING
+#############################################################
 
 # Add executable target
 add_executable(hello main.cpp)
@@ -65,6 +71,10 @@ target_link_libraries(hello PRIVATE ${wxWidgets_LIBRARIES})
 # Link to OpenGL and FreeGLUT
 target_link_libraries(hello PRIVATE ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
 
+
+# PREPARING
+#############################################################
+
 if (MSVC)
   # Need to copy C++ freeglut shared library to binary directory
   cmake_path(APPEND GLUT_ROOT "bin" "x64" "freeglut.dll" OUTPUT_VARIABLE GLUT_SHARED)
@@ -79,3 +89,41 @@ if (MSVC)
 endif()
 
 
+# PACKAGING
+#############################################################
+cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR LICENSE OUTPUT_VARIABLE LICENSE_FILE_PATH)
+cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR README.md OUTPUT_VARIABLE README_FILE_PATH)
+# Package folder
+cmake_path(APPEND CMAKE_CURRENT_BINARY_DIR ${PROJECT_NAME} OUTPUT_VARIABLE PROJECT_FILE_PATH)
+if (MSVC)
+  # Archive file path
+  set(ARCHIVE_FILE_NAME ${PROJECT_NAME}_${PROJECT_VERSION}_win64.zip)
+  cmake_path(APPEND CMAKE_CURRENT_BINARY_DIR $<CONFIG> ${ARCHIVE_FILE_NAME} OUTPUT_VARIABLE ARCHIVE_FILE_PATH)
+
+  # Need to copy C++ freeglut shared library to binary directory
+  add_custom_target(package_gui
+    COMMAND ${CMAKE_COMMAND} -E echo "Creating ${ARCHIVE_FILE_PATH}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_FILE_PATH}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:hello> ${PROJECT_FILE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LICENSE_FILE_PATH} ${PROJECT_FILE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${README_FILE_PATH}  ${PROJECT_FILE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLUT_SHARED} ${PROJECT_FILE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E tar "c" ${ARCHIVE_FILE_PATH} --format=zip -- ${PROJECT_NAME}
+  )
+else()
+  # Archive file path
+  set(ARCHIVE_FILE_NAME ${PROJECT_NAME}_${PROJECT_VERSION}_linux64.tar.gz)
+  cmake_path(APPEND CMAKE_CURRENT_BINARY_DIR $<CONFIG> ${ARCHIVE_FILE_NAME} OUTPUT_VARIABLE ARCHIVE_FILE_PATH)
+  
+  add_custom_target(package_gui
+    COMMAND ${CMAKE_COMMAND} -E echo "Creating ${ARCHIVE_FILE_PATH}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_FILE_PATH}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:hello> ${PROJECT_FILE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LICENSE_FILE_PATH} ${PROJECT_FILE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${README_FILE_PATH}  ${PROJECT_FILE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E tar "cz" ${ARCHIVE_FILE_PATH} -- ${PROJECT_NAME}
+  )
+endif()
+
+# Compile executable before packaging
+add_dependencies(package_gui hello)
