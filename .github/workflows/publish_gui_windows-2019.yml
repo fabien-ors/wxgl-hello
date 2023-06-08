@@ -46,14 +46,22 @@ jobs:
 #        sz x wxDLL.7z -y -o${{ env.WX_ROOT }} # add some libraries in lib directory
 
     # Sources are here: https://www.wxwidgets.org/downloads/
-    - name: Compile wxWidgets dependency
+    - name: Extract wxWidgets sources
       run: |
         set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
         Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v${{WX_VERSION}}/wxWidgets-${{WX_VERSION}}.tar.bz2 -OutFile wx.bz2
         sz x -y wx.bz2 # Unzip
         sz x -y wx -o${{github.workspace}} # Untar
         ls ${{ env.WX_ROOT }}
-
+        
+    - name: Compile wxWidgets sources (using Visual Studio shell)
+      uses: TheMrMilchmann/setup-msvc-dev@v2
+      with:
+        arch: x64
+      run : |
+        cd ${{ env.WX_ROOT }}\build\msw
+        nmake /a /t makefile.vc BUILD=release
+        
     - name : Create GUI sample program
       run : |
         cmake -B${{env.BUILD_DIR}} -DwxWidgets_ROOT=${{ env.WX_ROOT }} -DGLUT_ROOT=${{ env.GLUT_ROOT }}\freeglut
