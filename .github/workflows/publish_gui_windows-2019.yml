@@ -78,7 +78,8 @@ jobs:
       with:
         name: windows-archive
         path: ${{env.MY_FILE}}
-        
+
+  # TODO : Same steps as for linux
   publish:
     needs: build
     # Only ubuntu can upload via SCP
