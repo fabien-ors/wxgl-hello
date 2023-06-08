@@ -47,8 +47,8 @@ jobs:
     - name: Compile and install wxWidgets dependency
       run: |
         set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
-        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1.tar.bz2 -OutFile wxSources.bz2
-        sz x wxSources.bz2 -o${{ env.WX_ROOT }}
+        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1.tar.bz2 -OutFile wx.bz2
+        sz x wx.bz2 -o${{github.workspace}}
         ls ${{ env.WX_ROOT }}
 
     - name : Create GUI sample program
