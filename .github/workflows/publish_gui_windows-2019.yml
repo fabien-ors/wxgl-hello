@@ -61,7 +61,8 @@ jobs:
     - name: Compile wxWidgets sources (using Visual Studio shell)
       run : |
         cd ${{ env.WX_ROOT }}\build\msw
-        nmake /a /t makefile.vc BUILD=release
+        set _CL_=/MT
+        msbuild -m:4 -t:build -p:"Configuration=Release;Platform=x64" wx_vc17.sln
         
     - name : Create GUI sample program
       run : |
