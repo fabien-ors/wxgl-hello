@@ -42,8 +42,8 @@ jobs:
       
     - name: Install wxWidgets dependency
       run: |
+        Expand-Archive wxWidgets-3.2.2.1_vc16_x64_release.zip -DestinationPath ${{env.WX_ROOT}} # create WX_ROOT directory
         ls
-        Expand-Archive wx.zip -DestinationPath ${{env.WX_ROOT}} # create WX_ROOT directory
 
 #    - name: Install wxWidgets dependency
 #      run: |
