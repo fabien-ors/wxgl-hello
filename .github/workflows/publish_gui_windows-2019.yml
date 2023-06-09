@@ -33,7 +33,8 @@ jobs:
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-${{env.GLUT_VERSION}}.mp.zip -OutFile freeglut.zip
         Expand-Archive freeglut.zip -DestinationPath ${{env.GLUT_ROOT}} # create freeglut directory in GLUT_ROOT
 
-    - name: Download artifact
+    # TODO : Add WX_VERSION in the artifact name
+    - name: Download last wxWidgets compiled
       id: download-artifact
       uses: dawidd6/action-download-artifact@v2
       with:
@@ -43,7 +44,7 @@ jobs:
     - name: Install wxWidgets dependency
       run: |
         Expand-Archive wxWidgets-3.2.2.1_vc16_x64_release.zip -DestinationPath ${{env.WX_ROOT}} # create WX_ROOT directory
-        ls
+        ls ${{env.WX_ROOT}}
 
 #    - name: Install wxWidgets dependency
 #      run: |
