@@ -79,35 +79,16 @@ jobs:
         name: windows-archive
         path: ${{env.MY_FILE}}
 
-  # TODO : Same steps as for linux
   publish:
     needs: build
-    # Only ubuntu can upload via SCP
+    # Only ubuntu can upload via ssh
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/download-artifact@v3
-      # For downloading several artifacts: https://github.com/actions/download-artifact/issues/103#issuecomment-1290368250
-      with:
-        path: download_artifacts
-        
-    - name: Retrieve the list of files (all artifacts)
-      # For join_by function: https://stackoverflow.com/a/17841619/3952924
-      run: |
-        ls -ls download_artifacts/*/*
-        flist=$(ls download_artifacts/*/*)
-        function join_by { local IFS="$1"; shift; echo "$*"; }
-        flist=$(join_by , $flist)
-        echo "Artifacts retrieved: $flist"
-        echo "FILE_LIST=$flist" >> "$GITHUB_ENV"
-      shell: bash
-      
-    - uses: appleboy/scp-action@master
+    - uses: fabien-ors/files-publish-action@v1
       with:
         host: ${{ secrets.CG_HOST }}
         username: ${{ secrets.CG_USR }}
         password: ${{ secrets.CG_PWD }}
-        source: ${{env.FILE_LIST}}
-        target: /var/www/html/wxgl/
-        strip_components: 2
+        dest-path: "/var/www/html/wxgl"
 
