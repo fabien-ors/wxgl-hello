@@ -31,7 +31,7 @@ jobs:
     - name: Install Freeglut dependency
       run: |
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-${{env.GLUT_VERSION}}.mp.zip -OutFile freeglut.zip
-        Expand-Archive freeglut.zip -DestinationPath ${{github.workspace}}} # create GLUT_ROOT directory
+        Expand-Archive freeglut.zip -DestinationPath ${{github.workspace}} # create GLUT_ROOT directory
 
     # TODO : Add WX_VERSION in the artifact name
     - name: Download last wxWidgets compiled
@@ -39,11 +39,11 @@ jobs:
       uses: dawidd6/action-download-artifact@v2
       with:
         workflow: publish_wx_windows-2019.yml
-        name: windows-archive-vc16
+        name: windows-2019-${{env.WX_VERSION}}-vc${{env.VC_VERSION}}
       
     - name: Install wxWidgets dependency
       run: |
-        Expand-Archive wxWidgets-3.2.2.1_vc16_x64_release.zip -DestinationPath ${{github.workspace}}} # create WX_ROOT directory
+        Expand-Archive wxWidgets-{{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip -DestinationPath ${{github.workspace}} # create WX_ROOT directory
 
 #    - name: Install wxWidgets dependency
 #      run: |
