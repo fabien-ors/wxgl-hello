@@ -15,6 +15,9 @@ env:
 jobs:
   build:
     runs-on: windows-2019
+    strategy :
+      matrix:
+        vc: ["16","17"]
 
     steps:
     # wxWidgets sources are here: https://www.wxwidgets.org/downloads/
@@ -30,24 +33,23 @@ jobs:
       with:
         arch: x64
 
-    # TODO : Use different versions of Visual Studio (matrix)
     - name: Compile wxWidgets sources (using Visual Studio shell)
       run : |
         cd ${{env.WX_ROOT}}\build\msw
         set _CL_=/MT
-        msbuild -m:4 -t:build -p:"Configuration=Release;Platform=x64" wx_vc17.sln
+        msbuild -m:4 -t:build -p:"Configuration=Release;Platform=x64" wx_vc${{matrix.vc}}.sln
         
     - name : Package the wxWidgets libraries
       run : |
-        Compress-Archive -Path ${{env.WX_ROOT}} -DestinationPath wxWidgets-${{env.WX_VERSION}}_vc17_x64_release.zip
-        echo "MY_FILE=wxWidgets-${{env.WX_VERSION}}_vc17_x64_release.zip" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+        Compress-Archive -Path ${{env.WX_ROOT}} -DestinationPath wxWidgets-${{env.WX_VERSION}}_vc${{matrix.vc}}_x64_release.zip
+        echo "MY_FILE=wxWidgets-${{env.WX_VERSION}}_vc${{matrix.vc}}_x64_release.zip" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Result message
       run: echo "Built ${{env.MY_FILE}}"
 
     - uses: actions/upload-artifact@v3
       with:
-        name: windows-archive
+        name: windows-archive-vc${{matrix.vc}}
         path: ${{env.MY_FILE}}
     
   publish:
