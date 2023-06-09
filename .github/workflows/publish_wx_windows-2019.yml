@@ -49,11 +49,6 @@ jobs:
       with:
         name: windows-archive
         path: ${{env.MY_FILE}}
-
-  publish:
-    needs: build
-    # Only ubuntu can upload via SCP
-    runs-on: ubuntu-latest
     
   publish:
     needs: build
