@@ -33,25 +33,31 @@ jobs:
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-${{env.GLUT_VERSION}}.mp.zip -OutFile freeglut.zip
         Expand-Archive freeglut.zip -DestinationPath ${{env.GLUT_ROOT}} # create freeglut directory
 
-    # Sources are here: https://www.wxwidgets.org/downloads/
-    - name: Extract wxWidgets sources
+    - name: Install wxWidgets dependency
       run: |
-        set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
-        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v${{env.WX_VERSION}}/wxWidgets-${{env.WX_VERSION}}.tar.bz2 -OutFile wx.bz2
-        sz x -y wx.bz2 # Unzip
-        sz x -y wx -o${{github.workspace}} # Untar
-        ls ${{env.WX_ROOT}}
+        $WX_ARCHIVE = wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip
+        Invoke-WebRequest https://soft.mines-paristech.fr/wxWidgets/$WX_ARCHIVE -OutFile wx.zip
+        Expand-Archive wx.zip -DestinationPath ${{env.WX_ROOT}} # create wxWdgets directory
+
+    # Sources are here: https://www.wxwidgets.org/downloads/
+#    - name: Extract wxWidgets sources
+#      run: |
+#        set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
+#        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v${{env.WX_VERSION}}/wxWidgets-${{env.WX_VERSION}}.tar.bz2 -OutFile wx.bz2
+#        sz x -y wx.bz2 # Unzip
+#        sz x -y wx -o${{github.workspace}} # Untar
+#        ls ${{env.WX_ROOT}}
 
     # Setup Visual Studio command prompt
-    - uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: x64
+#    - uses: ilammy/msvc-dev-cmd@v1
+#      with:
+#        arch: x64
 
-    - name: Compile wxWidgets sources (x64 Release only)
-      run : |
-        cd ${{env.WX_ROOT}}\build\msw
-        set _CL_=/MT
-        msbuild -m:4 -t:build -p:"Configuration=Release;Platform=x64" wx_vc${{env.VC_VERSION}}.sln
+#    - name: Compile wxWidgets sources (x64 Release only)
+#      run : |
+#        cd ${{env.WX_ROOT}}\build\msw
+#        set _CL_=/MT
+#        msbuild -m:4 -t:build -p:"Configuration=Release;Platform=x64" wx_vc${{env.VC_VERSION}}.sln
         
     - name : Create GUI sample program
       run : |
@@ -71,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: fabien-ors/files-publish-action@v1
+    - uses: fabien-ors/files-publish-action@v3
       with:
         host: ${{ secrets.CG_HOST }}
         username: ${{ secrets.CG_USR }}
