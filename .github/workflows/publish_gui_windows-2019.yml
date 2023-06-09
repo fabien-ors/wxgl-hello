@@ -35,10 +35,14 @@ jobs:
 
     - name: Install wxWidgets dependency
       run: |
-#        $WX_ARCHIVE = wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip
-#        Invoke-WebRequest https://soft.mines-paristech.fr/wxWidgets/$WX_ARCHIVE -OutFile wx.zip
         Invoke-WebRequest https://github.com/fabien-ors/wxgl-hello/suites/13490271279/artifacts/740885333 -OutFile wx.zip
         Expand-Archive wx.zip -DestinationPath ${{env.WX_ROOT}} # create wxWdgets directory
+
+#    - name: Install wxWidgets dependency
+#      run: |
+#        $WX_ARCHIVE = wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip
+#        Invoke-WebRequest https://soft.mines-paristech.fr/wxWidgets/$WX_ARCHIVE -OutFile wx.zip
+#        Expand-Archive wx.zip -DestinationPath ${{env.WX_ROOT}} # create wxWdgets directory
 
     # Sources are here: https://www.wxwidgets.org/downloads/
 #    - name: Extract wxWidgets sources
