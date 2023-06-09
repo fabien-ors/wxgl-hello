@@ -31,12 +31,19 @@ jobs:
     - name: Install Freeglut dependency
       run: |
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-${{env.GLUT_VERSION}}.mp.zip -OutFile freeglut.zip
-        Expand-Archive freeglut.zip -DestinationPath ${{env.GLUT_ROOT}} # create freeglut directory
+        Expand-Archive freeglut.zip -DestinationPath ${{env.GLUT_ROOT}} # create freeglut directory in GLUT_ROOT
 
+    - name: Download artifact
+      id: download-artifact
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        workflow: publish_wx_windows-2019.yml
+        name: windows-archive-vc16
+      
     - name: Install wxWidgets dependency
       run: |
-        Invoke-WebRequest https://github.com/fabien-ors/wxgl-hello/suites/13490271279/artifacts/740885333 -OutFile wx.zip
-        Expand-Archive wx.zip -DestinationPath ${{env.WX_ROOT}} # create wxWdgets directory
+        ls
+        Expand-Archive wx.zip -DestinationPath ${{env.WX_ROOT}} # create WX_ROOT directory
 
 #    - name: Install wxWidgets dependency
 #      run: |
