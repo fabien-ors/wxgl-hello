@@ -39,7 +39,8 @@ jobs:
       uses: dawidd6/action-download-artifact@v2
       with:
         workflow: publish_wx_windows-2019.yml
-        name: windows-2019-${{env.WX_VERSION}}-vc${{env.VC_VERSION}}
+        name: windows-archive-vc${{env.VC_VERSION}}
+#        name: windows-2019-${{env.WX_VERSION}}-vc${{env.VC_VERSION}}
       
     - name: Install wxWidgets dependency
       run: |
