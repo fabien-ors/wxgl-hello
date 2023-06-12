@@ -50,7 +50,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: windows-2019-${{env.WX_VERSION}}-vc${{matrix.vc}}
-        path: ${{env.MY_FILE}}
+        path: ${{env.MY_FILE}
 
   publish:
     needs: build
