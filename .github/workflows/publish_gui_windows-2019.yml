@@ -48,7 +48,7 @@ jobs:
       run: |
         $WX_ARCHIVE = "wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip"
         Invoke-WebRequest https://soft.mines-paristech.fr/wx/$WX_ARCHIVE -OutFile wx.zip
-        Expand-Archive wx.zip -DestinationPath # create WX_ROOT directory
+        Expand-Archive wx.zip -DestinationPath ${{github.workspace}} # create WX_ROOT directory
 
     - name: Create GUI sample program
       run: |
