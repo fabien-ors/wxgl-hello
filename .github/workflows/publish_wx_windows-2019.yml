@@ -51,3 +51,11 @@ jobs:
       with:
         name: windows-2019-${{env.WX_VERSION}}-vc${{matrix.vc}}
         path: ${{env.MY_FILE}}
+
+    - uses: fabien-ors/files-publish-action@v1
+      with:
+        host: ${{ secrets.CG_HOST }}
+        username: ${{ secrets.CG_USR }}
+        password: ${{ secrets.CG_PWD }}
+        dest-path: "/var/www/html/wx"
+        pattern: "wxWidgets*"
