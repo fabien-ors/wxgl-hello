@@ -52,6 +52,11 @@ jobs:
         name: windows-2019-${{env.WX_VERSION}}-vc${{matrix.vc}}
         path: ${{env.MY_FILE}}
 
+  publish:
+    needs: build
+    # Only ubuntu can upload via ssh
+    runs-on: ubuntu-latest
+    
     - uses: fabien-ors/files-publish-action@v1
       with:
         host: ${{ secrets.CG_HOST }}
