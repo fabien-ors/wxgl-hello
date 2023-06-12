@@ -44,9 +44,6 @@ jobs:
         Compress-Archive -Path ${{env.WX_ROOT}} -DestinationPath wxWidgets-${{env.WX_VERSION}}_vc${{matrix.vc}}_x64_release.zip
         echo "MY_FILE=wxWidgets-${{env.WX_VERSION}}_vc${{matrix.vc}}_x64_release.zip" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
-    - name: Result message
-      run: echo "Built ${{env.MY_FILE}}"
-
     - uses: actions/upload-artifact@v3
       with:
         name: windows-2019-${{env.WX_VERSION}}-vc${{matrix.vc}}
