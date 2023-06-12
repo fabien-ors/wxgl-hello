@@ -46,7 +46,7 @@ jobs:
 
     - name: Install wxWidgets dependency
       run: |
-        $WX_ARCHIVE = wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip
+        $WX_ARCHIVE = "wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip"
         Invoke-WebRequest https://soft.mines-paristech.fr/wx/$WX_ARCHIVE -OutFile wx.zip
         Expand-Archive wx.zip -DestinationPath # create WX_ROOT directory
 
