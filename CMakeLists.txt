@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 
 # Define project here
 project(hello_world
-        VERSION      1.1
+        VERSION      1.2
         DESCRIPTION  "Hello World"
         HOMEPAGE_URL "https://docs.wxwidgets.org/3.0/overview_helloworld.html"
         LANGUAGES    C CXX) # Enable C language for third party libraries

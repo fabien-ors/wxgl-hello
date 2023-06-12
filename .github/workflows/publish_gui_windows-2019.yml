@@ -33,16 +33,22 @@ jobs:
         Invoke-WebRequest https://www.transmissionzero.co.uk/files/software/development/GLUT/older/freeglut-MSVC-${{env.GLUT_VERSION}}.mp.zip -OutFile freeglut.zip
         Expand-Archive freeglut.zip -DestinationPath ${{github.workspace}} # create GLUT_ROOT directory
 
-    - name: Download last wxWidgets compiled
-      id: download-artifact
-      uses: dawidd6/action-download-artifact@v2
-      with:
-        workflow: publish_wx_windows-2019.yml
-        name: windows-2019-${{env.WX_VERSION}}-vc${{env.VC_VERSION}}
-      
+#    - name: Download last wxWidgets compiled (from publish_wx_windows workflow)
+#      id: download-artifact
+#      uses: dawidd6/action-download-artifact@v2
+#      with:
+#        workflow: publish_wx_windows-2019.yml
+#        name: windows-2019-${{env.WX_VERSION}}-vc${{env.VC_VERSION}}
+#      
+#    - name: Install wxWidgets dependency
+#      run: |
+#        Expand-Archive wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip -DestinationPath ${{github.workspace}} # create WX_ROOT directory
+
     - name: Install wxWidgets dependency
       run: |
-        Expand-Archive wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip -DestinationPath ${{github.workspace}} # create WX_ROOT directory
+        $WX_ARCHIVE = wxWidgets-${{env.WX_VERSION}}_vc${{env.VC_VERSION}}_x64_release.zip
+        Invoke-WebRequest https://soft.mines-paristech.fr/wx/$WX_ARCHIVE -OutFile wx.zip
+        Expand-Archive wx.zip -DestinationPath # create WX_ROOT directory
 
     - name: Create GUI sample program
       run: |
