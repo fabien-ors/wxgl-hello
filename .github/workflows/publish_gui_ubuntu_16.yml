@@ -26,7 +26,6 @@ jobs:
         cmake -B${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE:STRING=${{env.BUILD_TYPE}}
         cmake --build ${{env.BUILD_DIR}} --target package_gui
         echo "MY_FILE=$(ls ${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/hello*.tar.gz)" >> "$GITHUB_ENV"
-        ldd ${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/
 
     - name: Result message
       run: echo "Built ${{env.MY_FILE}}"
