@@ -1,4 +1,4 @@
-name: publish_gui_ubuntu-16
+name: publish_gui_ubuntu-16-18
 
 on:
   workflow_dispatch:
@@ -15,8 +15,11 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy :
+      matrix:
+        ubuntu: ["16","18"]
     container:
-      image: flumy/ubuntu-16-wx
+      image: flumy/ubuntu-${matrix.ubuntu}-wx
 
     steps:
     - uses: actions/checkout@v3
@@ -32,7 +35,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3 
       with:
-        name: ubuntu-16-bin
+        name: ubuntu-${matrix.ubuntu}-bin
         path: ${{env.MY_FILE}}
 
   publish:

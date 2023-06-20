@@ -11,7 +11,7 @@ project(hello_world
 # Activate verbose mode
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 # Debug find package instruction
-set(CMAKE_FIND_DEBUG_MODE TRUE)
+#set(CMAKE_FIND_DEBUG_MODE TRUE)
 
 # Detect presence of multi configuration generators
 get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -111,8 +111,13 @@ if (MSVC)
     COMMAND ${CMAKE_COMMAND} -E tar "c" ${ARCHIVE_FILE_PATH} --format=zip -- ${PROJECT_NAME}
   )
 else()
-  # Archive file path
-  set(ARCHIVE_FILE_NAME ${PROJECT_NAME}_${PROJECT_VERSION}_linux64.tar.gz)
+  # Get Name/Version of the Linux
+  # https://stackoverflow.com/a/41592428/3952924
+  find_program(LSB_RELEASE_EXEC lsb_release)
+  execute_process(COMMAND ${LSB_RELEASE_EXEC} -rs OUTPUT_VARIABLE LSB_OS_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND ${LSB_RELEASE_EXEC} -is OUTPUT_VARIABLE LSB_OS_NAME OUTPUT_STRIP_TRAILING_WHITESPACE)
+  # Archive file path.
+  set(ARCHIVE_FILE_NAME ${PROJECT_NAME}_${PROJECT_VERSION}_${LSB_OS_NAME}_${LSB_OS_VERSION}.tar.gz)
   cmake_path(APPEND CMAKE_CURRENT_BINARY_DIR $<CONFIG> ${ARCHIVE_FILE_NAME} OUTPUT_VARIABLE ARCHIVE_FILE_PATH)
   
   add_custom_target(package_gui
