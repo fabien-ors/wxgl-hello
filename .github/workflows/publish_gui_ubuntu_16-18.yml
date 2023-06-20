@@ -19,7 +19,7 @@ jobs:
       matrix:
         ubuntu: ["16","18"]
     container:
-      image: flumy/ubuntu-${matrix.ubuntu}-wx
+      image: flumy/ubuntu-${{matrix.ubuntu}}-wx
 
     steps:
     - uses: actions/checkout@v3
@@ -33,9 +33,10 @@ jobs:
     - name: Result message
       run: echo "Built ${{env.MY_FILE}}"
 
+    # Upload artifact with a different name for each ubuntu version
     - uses: actions/upload-artifact@v3 
       with:
-        name: ubuntu-${matrix.ubuntu}-bin
+        name: ubuntu-${{matrix.ubuntu}}-bin
         path: ${{env.MY_FILE}}
 
   publish:
