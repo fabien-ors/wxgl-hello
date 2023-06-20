@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 
 # Define project here
 project(hello_world
-        VERSION      1.2
+        VERSION      1.3
         DESCRIPTION  "Hello World"
         HOMEPAGE_URL "https://docs.wxwidgets.org/3.0/overview_helloworld.html"
         LANGUAGES    C CXX) # Enable C language for third party libraries
@@ -11,7 +11,7 @@ project(hello_world
 # Activate verbose mode
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 # Debug find package instruction
-#set(CMAKE_FIND_DEBUG_MODE TRUE)
+set(CMAKE_FIND_DEBUG_MODE TRUE)
 
 # Detect presence of multi configuration generators
 get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
