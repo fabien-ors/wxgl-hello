@@ -31,9 +31,6 @@ jobs:
         cmake --build ${{env.BUILD_DIR}} --target package_gui
         echo "MY_FILE=$(ls ${{env.BUILD_DIR}}/${{env.BUILD_TYPE}}/hello*.tar.gz)" >> "$GITHUB_ENV"
 
-    - name: Result message
-      run: echo "Built ${{env.MY_FILE}}"
-
     # Upload artifact with a different name for each ubuntu version
     - uses: actions/upload-artifact@v3 
       with:
