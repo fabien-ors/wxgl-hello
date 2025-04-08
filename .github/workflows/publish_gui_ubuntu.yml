@@ -1,0 +1,80 @@
+name: publish_gui_ubuntu
+
+on:
+  # Permit calling the workflow from outside (https://github.com/actions/runner/discussions/1884)
+  workflow_call:
+    inputs:
+      dry_publish:
+        description: 'Dry publish (no upload)'
+        type: boolean
+        required: false
+        default: true
+  # Permit manual trigger
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Manual'
+        required: false
+        default: ''
+      dry_publish:
+        description: 'Dry publish (no upload)'
+        type: boolean
+        required: false
+        default: false
+
+env:
+  CMAKE_BUILD_TYPE : Release
+  BUILD_DIR : build
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        # Only one old Linux and a generic platform name BUILD_PLAT
+        os: [ubuntu-20.04]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -yq \
+          libwxgtk3.0-gtk3-dev \
+          freeglut3-dev
+
+    - name : Configure build directory
+      run : |
+        cmake -B${{ env.BUILD_DIR }}
+
+    - name: Create GUI program and archive package
+      run: |
+        cmake --build ${{env.BUILD_DIR}}
+        echo "MY_FILE=$(ls ${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello)" >> "$GITHUB_ENV"
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ubuntu-archive
+        path: ${{env.MY_FILE}}
+
+  publish:
+    needs: build
+    if: ${{inputs.dry_publish == false}}
+
+    # Only ubuntu can upload via ssh
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: fabien-ors/files-publish-action@v5
+      with:
+        host: ${{ secrets.CG_HOST }}
+        username: ${{ secrets.CG_USR }}
+        password: ${{ secrets.CG_PWD }}
+        dest-path: "/var/www/html/wxgl"
+        pattern: "ubuntu-archive"
+
+    # Delete the artifacts (for freeing storage space under github)
+    - uses: geekyeggo/delete-artifact@v5
+      with:
+        name: ubuntu-archive
