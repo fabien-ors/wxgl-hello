@@ -1,4 +1,4 @@
-name: publish_gui_ubuntu
+name: publish_gui_ubuntu_rhl8
 
 on:
   # Permit calling the workflow from outside (https://github.com/actions/runner/discussions/1884)
