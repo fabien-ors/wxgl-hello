@@ -50,10 +50,10 @@ jobs:
             echo \"MY_FILE=$(ls ${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello)\" >> \"$GITHUB_ENV\"
           "
 
-    - uses: actions/upload-artifact@v4
-      with:
-        name: ubuntu-archive
-        path: ${{env.MY_FILE}}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-archive
+          path: ${{env.MY_FILE}}
 
   publish:
     needs: build
