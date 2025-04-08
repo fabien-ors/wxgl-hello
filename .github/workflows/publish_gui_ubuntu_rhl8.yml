@@ -1,0 +1,77 @@
+name: publish_gui_ubuntu
+
+on:
+  # Permit calling the workflow from outside (https://github.com/actions/runner/discussions/1884)
+  workflow_call:
+    inputs:
+      dry_publish:
+        description: 'Dry publish (no upload)'
+        type: boolean
+        required: false
+        default: true
+  # Permit manual trigger
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Manual'
+        required: false
+        default: ''
+      dry_publish:
+        description: 'Dry publish (no upload)'
+        type: boolean
+        required: false
+        default: false
+
+env:
+  CMAKE_BUILD_TYPE : Release
+  BUILD_DIR : build
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build inside RHEL 8 UBI container
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace registry.access.redhat.com/ubi8/ubi:latest bash -c "
+            dnf install -y gcc-c++ make cmake gtk3-devel
+            # Installation des autres dépendances nécessaires
+            # dnf install -y <autres-paquets>
+            mkdir -p $BUILD_DIR
+            cd $BUILD_DIR
+            cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE ..
+            make -j$(nproc)
+            echo \"MY_FILE=$(ls ${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello)\" >> \"$GITHUB_ENV\"
+          "
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ubuntu-archive
+        path: ${{env.MY_FILE}}
+
+  publish:
+    needs: build
+    if: ${{inputs.dry_publish == false}}
+
+    # Only ubuntu can upload via ssh
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: fabien-ors/files-publish-action@v5
+      with:
+        host: ${{ secrets.CG_HOST }}
+        username: ${{ secrets.CG_USR }}
+        password: ${{ secrets.CG_PWD }}
+        dest-path: "/var/www/html/wxgl"
+        pattern: "ubuntu-archive"
+
+    # Delete the artifacts (for freeing storage space under github)
+    - uses: geekyeggo/delete-artifact@v5
+      with:
+        name: ubuntu-archive
