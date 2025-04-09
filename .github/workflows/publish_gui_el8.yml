@@ -41,7 +41,6 @@ jobs:
             cd $BUILD_DIR
             cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE ..
             make -j$(nproc)
-            echo 'MY_FILE=${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello' >> '$GITHUB_ENV'
           "
 
       - uses: actions/upload-artifact@v4
