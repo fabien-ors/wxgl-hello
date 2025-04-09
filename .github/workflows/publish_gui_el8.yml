@@ -1,4 +1,4 @@
-name: publish_gui_ubuntu_el8
+name: publish_gui_el8
 
 on:
   # Permit calling the workflow from outside (https://github.com/actions/runner/discussions/1884)
@@ -36,17 +36,17 @@ jobs:
 
       - name: Build inside Almalinux 8 container
         run: |
-          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace flumy/almalinux-8-wx:latest bash -c "
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace flumy/almalinux-8-wx:latest bash -c '
             mkdir -p $BUILD_DIR
             cd $BUILD_DIR
             cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE ..
             make -j$(nproc)
-            echo \"MY_FILE=${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello\" >> \"$GITHUB_ENV\"
-          "
+            echo "MY_FILE=${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello" >> "$GITHUB_ENV"
+          '
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-archive
+          name: el8-archive
           path: ${{env.MY_FILE}}
 
   publish:
@@ -63,9 +63,9 @@ jobs:
         username: ${{ secrets.CG_USR }}
         password: ${{ secrets.CG_PWD }}
         dest-path: "/var/www/html/wxgl"
-        pattern: "ubuntu-archive"
+        pattern: "el8-archive"
 
     # Delete the artifacts (for freeing storage space under github)
     - uses: geekyeggo/delete-artifact@v5
       with:
-        name: ubuntu-archive
+        name: el8-archive
