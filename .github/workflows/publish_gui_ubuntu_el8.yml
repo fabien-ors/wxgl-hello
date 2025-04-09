@@ -1,0 +1,71 @@
+name: publish_gui_ubuntu_el8
+
+on:
+  # Permit calling the workflow from outside (https://github.com/actions/runner/discussions/1884)
+  workflow_call:
+    inputs:
+      dry_publish:
+        description: 'Dry publish (no upload)'
+        type: boolean
+        required: false
+        default: true
+  # Permit manual trigger
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Manual'
+        required: false
+        default: ''
+      dry_publish:
+        description: 'Dry publish (no upload)'
+        type: boolean
+        required: false
+        default: false
+
+env:
+  CMAKE_BUILD_TYPE : Release
+  BUILD_DIR : build
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Build inside Almalinux 8 container
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace flumy/almalinux-8-wx:latest bash -c "
+            mkdir -p $BUILD_DIR
+            cd $BUILD_DIR
+            cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE ..
+            make -j$(nproc)
+            echo \"MY_FILE=${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello\" >> \"$GITHUB_ENV\"
+          "
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-archive
+          path: ${{env.MY_FILE}}
+
+  publish:
+    needs: build
+    if: ${{inputs.dry_publish == false}}
+
+    # Only ubuntu can upload via ssh
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: fabien-ors/files-publish-action@v5
+      with:
+        host: ${{ secrets.CG_HOST }}
+        username: ${{ secrets.CG_USR }}
+        password: ${{ secrets.CG_PWD }}
+        dest-path: "/var/www/html/wxgl"
+        pattern: "ubuntu-archive"
+
+    # Delete the artifacts (for freeing storage space under github)
+    - uses: geekyeggo/delete-artifact@v5
+      with:
+        name: ubuntu-archive
