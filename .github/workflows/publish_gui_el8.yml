@@ -36,13 +36,13 @@ jobs:
 
       - name: Build inside Almalinux 8 container
         run: |
-          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace flumy/almalinux-8-wx:latest bash -c '
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace flumy/almalinux-8-wx:latest bash -c "
             mkdir -p $BUILD_DIR
             cd $BUILD_DIR
             cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE ..
             make -j$(nproc)
-            echo "MY_FILE=${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello" >> "$GITHUB_ENV"
-          '
+            echo 'MY_FILE=${{env.BUILD_DIR}}/${{env.CMAKE_BUILD_TYPE}}/hello' >> '$GITHUB_ENV'
+          "
 
       - uses: actions/upload-artifact@v4
         with:
